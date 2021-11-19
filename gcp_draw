@@ -1,0 +1,131 @@
+meta {
+  title "HaCC Anthos Operators View"
+}
+
+elements {
+
+  #users
+  card users as admins_public {
+  	name "ops admins cloud"
+  }
+
+  gcp {
+    card anthos as anothos_console
+    {
+    	name "Anthos Console"
+    }
+    card gke as gke
+    card vpn as vpn_gcp {
+    	name "vpn"
+    }
+    group common {
+      name "Cloud Services"
+
+      card stackdriver {
+          name "logging"
+      }
+      card gcr {
+      }
+    }
+    
+  }
+  
+  group onprem {
+  	# users on-prem
+    card users as admin_onprem {
+    	name "ops admin on-prem"
+    }
+    card users as end_users_onprem {
+    	name "end users on-prem"
+    }
+    
+    background_color "#efebe9"
+
+    group onprem_ford {
+      name "Ford Island"
+      background_color "#edf1f2"
+
+      group ABM_Ford {
+      	name "Anthos Bare Metal"
+        background_color "#d3e8f0"
+        card anthos as Anthos_on_prem_ford {
+            name "Anthos Bare Metal"
+        }
+        card istio as asm_onprem_ford {
+          name "ASM"
+        }
+      }
+      group VMWare_1 {
+      	name "vSphere"
+        card VMWare as VMWare_ford {
+        	name "vSphere"
+            icon_url "https://drive.google.com/file/d/1Wua6mqt2V-Oii9agWabKd_87gUY9yaAF/view"
+        }
+        
+      }
+    }
+
+     group onprem_okc {
+      name "OKC"
+      background_color "#edf1f2"
+
+      group ABM_okc {
+      	name "Anthos Bare Metal"
+        background_color "#d3e8f0"
+        card anthos as Anthos_on_prem_okc {
+            name "Anthos Bare Metal"
+        }
+        card istio as asm_onprem_okc {
+          name "ASM"
+        }
+      }
+      group VMWare_2 {
+      	name "vSphere"
+        card VMWare as VMWare_okc {
+        	name "vSphere"
+            icon_url "https://drive.google.com/file/d/1Wua6mqt2V-Oii9agWabKd_87gUY9yaAF/view"
+        }
+        
+      }
+    }
+
+    group common_service {
+      name "Common Services"
+	  card dns{
+      	name "DNS"
+      }
+      card apigee_api_platform
+      card vpn as vpn_onprem {
+          name "vpn on-prem"
+      }
+      card git_repo as git_onprem {
+      	name "git"
+        icon_url "https://drive.google.com/file/d/1aT6TKRsO8EzIUG_F4yZgNV0RajChn0qT/view"
+      }
+    }
+
+  
+  }
+
+}
+
+paths {
+  #users
+  admins_public <--> anothos_console
+  
+  #users on prem
+  admin_onprem <--> onprem_ford
+  admin_onprem <-down-> onprem_okc
+  end_users_onprem <--> apigee_api_platform
+  
+  #Anthos 
+  asm_onprem_ford <-down-> Anthos_on_prem_ford
+  asm_onprem_okc <-down-> Anthos_on_prem_okc
+  anothos_console <-down-> gke
+  apigee_api_platform <--> asm_onprem_ford
+  asm_onprem_okc <--> apigee_api_platform
+  vpn_gcp <.. vpn_onprem
+  vpn_gcp <-up-> gke
+  gke <--> common
+
+}
